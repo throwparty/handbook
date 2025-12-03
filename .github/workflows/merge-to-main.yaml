@@ -1,0 +1,14 @@
+name: Merge to main
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy-www:
+    name: Build and deploy site
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    uses: ./.github/workflows/build-and-deploy.yaml
