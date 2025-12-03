@@ -1,0 +1,47 @@
+# Nix
+
+[Nix](https://nixos.org/explore/) defines all of the dependencies for each component of our systems, and the shells we use to build it in.
+
+:::tip
+
+You are free to use whatever tooling you desire on your system.
+
+If Nix and Home Manager feel overkill, you're not obligated to use them. Note however that you **will** spend additional time getting projects set up to run locally, and maintaining non-standard configurations is solely your responsibility.
+
+:::
+
+## Installation
+
+Installation depends on your platform.
+
+<Tabs groupId="os" queryString="os">
+  <TabItem value="gnu-linux" label="GNU/Linux">
+    What steps are required for you depend on your Linux distribution.
+
+    If you're running NixOS, congratulations: you already have Nix installed.
+
+    If not, install it as follows:
+
+    ```shell
+    sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon
+    ```
+  </TabItem>
+
+  <TabItem value="macos" label="macOS">
+    On macOS, install as follows:
+
+    ```shell
+    sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install)
+    ```
+  </TabItem>
+
+  <TabItem value="windows" label="Windows">
+    Good luck -- you're on your own!
+  </TabItem>
+</Tabs>
+
+## Usage
+
+There is currently no global configuration here, as we consider your workstation to be your domain.
+
+We define all of our dev shells in the <GitHubLink repo="throwparty/nix" /> repository. These are typically enabled using the repository's direnv configuration.

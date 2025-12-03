@@ -1,0 +1,31 @@
+# Just
+
+We use Just as our task runner of choice, as opposed to Make.
+
+## Starter
+
+Tighten up the shell configuration to minimise future surprises:
+
+```just
+set shell := ["bash", "-eux", "-o", "pipefail", "-c"]
+```
+
+And define a `list` target as the `default`, to help consumers find things:
+
+```just
+default: list
+
+list:
+    just --list
+```
+
+## Common tasks
+
+Copy and paste these targets to help you get started.
+
+### Formatting with `treefmt`
+
+```shell
+fmt:
+    treefmt
+```

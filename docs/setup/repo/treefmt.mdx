@@ -1,0 +1,29 @@
+# treefmt
+
+## Common formatters
+
+You can append these common formatter configurations to `treefmt.toml` to get your configuration started.
+
+### `mdformat`
+
+```toml
+[formatter.mdformat]
+command = "mdformat"
+includes = ["*.md"]
+```
+
+### `nixfmt`
+
+```toml
+[formatter.nixfmt]
+command = "nixfmt"
+includes = ["*.nix"]
+```
+
+### `toml-sort`
+
+```toml
+[formatter.toml-sort]
+command = "toml-sort"
+includes = ["*.toml"]
+```

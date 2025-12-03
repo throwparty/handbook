@@ -1,0 +1,43 @@
+# direnv
+
+We generally prepare two things with direnv:
+
+- A Nix `devShell` containing any development dependencies of the application.
+- Environment variables, some of which may come from secure storage.
+
+## Prerequisites
+
+- You have [direnv](../machine/direnv) installed.
+- You have [Nix](../machine/nix) installed.
+- You have an appropriate [Nix `devShell`](nix-dev-shells) ready.
+
+## Sample configuration
+
+direnv invokes bash with its own standard library of additional functions, so any valid bash is valid direnv configuration.
+
+:::warning
+
+Since developers may choose to customise their configurations beyond what the authors intended, we do not write our configurations to `.envrc` directly, instead writing them to `sample.envrc`.
+
+Developers may either link or copy this file to `.envrc`, and the path is ignored by source control to avoid their customisations being overwritten or accidentally checked in.
+
+:::
+
+### Loading a Nix `devShell`
+
+We use the `git+ssh` scheme over `github:` to avoid the need for GitHub tokens in your Nix daemon configuration. Note the `${name}` and `${version}` placeholders, which you'll need to replace with the name of the desired shell. You can find these documented in <GitHubLink repo="throwparty/nix" ref="main" blob="shells/default.nix" />
+
+```shell
+use flake "git+ssh://git@github.com/throwparty/nix#${name}_${version}"
+```
+
+### Setting environment variables from secrets
+
+`$creds` isn't exported, so it won't be copied into the shell direnv spawns. Since `$SOME_APP_USER` and `$SOME_APP_TOKEN` are, they will.
+
+```shell
+# Some app credentials
+creds="$(bw get item 'throwparty/sample-app')"
+export SOME_APP_USER="$(echo "$creds" | jq -r '.fields[] | select(.name == "Some app user") | .value')"
+export SOME_APP_TOKEN="$(echo "$creds" | jq -r '.fields[] | select(.name == "Some app token") | .value')"
+```

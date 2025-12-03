@@ -1,0 +1,8 @@
+{
+  "label": "Machine",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "The global configuration we have to do on developer workstations."
+  }
+}

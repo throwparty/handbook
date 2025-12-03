@@ -13,6 +13,9 @@
 # npm
 /node_modules/
 
+# Webpack
+/.yarn/.cache/
+
 # Build artifacts
 /build/
 

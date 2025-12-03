@@ -1,0 +1,84 @@
+# Nix dev shell
+
+Repositories should define their dependencies in one of two ways:
+
+- Consume a shared shell configuration from <GitHubLink repo="throwparty/nix" />. Where it is possible this is preferred.
+- Define one or more Nix `devShell`s containing all of its dependencies. More complex or experimental applications that target runtimes or dependencies not yet covered by one of our shared configurations may elect to do this.
+
+## Prerequisites
+
+- You have [Nix installed](../machine/nix).
+
+## Starter configuration
+
+If using a shared shell configuration, skip the remainder of this document and [configure direnv to load your shell](direnv).
+
+:::warning
+
+Nix derivation evaluation can be fairly slow, especially where no binary cache is able to provide a package and you're forced to rebuild. To minimise evaluation time:
+
+- Keep your Nix-specific configuration in the `nix` subdirectory of your repository so only this subdirectory is copied to the Nix store.
+- Where possible, avoid duplicate flake inputs by defining `inputs.*.follows` for each input that declares a dependency the parent flake can provide. You can identify these by using `nix flake show` or by examining `flake.lock`.
+
+:::
+
+Place this at `nix/flake.nix`:
+
+```nix
+{
+  description = "throwparty/sample";
+
+  inputs = {
+    flake-utils.url = "github:numtide/flake-utils";
+    nixpkgs.url = "github:NixOS/nixpkgs/release-25.05";
+    throw-party = {
+      url = "git+ssh://git@github.com/throwparty/nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
+
+  outputs =
+    { flake-utils, nixpkgs, throw-party, ... }:
+    flake-utils.lib.eachDefaultSystem (system:
+      let pkgs = import nixpkgs {
+        inherit system;
+      };
+      in
+      rec {
+        lib = pkgs.lib // throw-party.lib.${system};
+        devShells = import ./shells.nix {
+          inherit lib pkgs;
+        };
+      }
+    );
+}
+```
+
+And `nix/shells.nix`:
+
+```nix
+{ lib, pkgs }:
+let
+  inherit (pkgs.lib) getExe getExe';
+in
+{
+  default =
+    let
+      inherit (pkgs) pipes sl;
+      shellPackages = [ pipes sl ];
+      toolVersions = lib.mkToolVersions "default" ''
+        printf "pipes %s\n" "$(${getExe pipes} --version)"
+        printf "sl %s\n" "$(${getExe sl} --version)"
+      '';
+    in
+    pkgs.mkShell {
+      shellHook = ''
+        export DO_NOT_TRACK=1
+        cat ${toolVersions}
+      '';
+      nativeBuildInputs = shellPackages;
+    };
+}
+```
+
+Now [configure direnv to load your shell](direnv).

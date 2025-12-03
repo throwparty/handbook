@@ -1,0 +1,8 @@
+{
+  "label": "Repository",
+  "position": 3,
+  "link": {
+    "type": "generated-index",
+    "description": "The per-repository configuration for things like dependency management, building, formatting, and linting."
+  }
+}
