@@ -9,3 +9,13 @@
 /.yarn/install-state.gz
 /.yarn/sdks/
 /.yarn/unplugged/
+
+# npm
+/node_modules/
+
+# Build artifacts
+/build/
+
+# Temporary files
+.docusaurus
+.cache-loader
