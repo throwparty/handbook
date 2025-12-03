@@ -1,3 +1,11 @@
 # direnv
 /.direnv/
 /.envrc
+
+# Yarn
+# https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
+/.yarn/cache/
+/.pnp.*
+/.yarn/install-state.gz
+/.yarn/sdks/
+/.yarn/unplugged/

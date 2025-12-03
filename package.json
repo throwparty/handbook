@@ -1,0 +1,6 @@
+{
+  "name": "@throwparty/handbook",
+  "description": "General documentation that we're comfortable publishing goes here",
+  "private": true,
+  "packageManager": "yarn@4.12.0"
+}
