@@ -94,8 +94,20 @@ const config: Config = {
           title: "Quick links",
           items: [
             {
+              label: "AWS",
+              href: "https://throwparty.awsapps.com/start",
+            },
+            {
               label: "GitHub",
               href: "https://github.com/throwparty",
+            },
+            {
+              label: "Mail",
+              href: "https://inbox.purelymail.com/",
+            },
+            {
+              label: "Slack",
+              href: "https://throwdotparty.slack.com/",
             },
           ],
         },
