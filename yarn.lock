@@ -2936,7 +2936,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mdx-js/react@npm:^3.0.0":
+"@mdx-js/react@npm:^3.0.0, @mdx-js/react@npm:^3.1.1":
   version: 3.1.1
   resolution: "@mdx-js/react@npm:3.1.1"
   dependencies:
@@ -3260,7 +3260,7 @@ __metadata:
     "@docusaurus/preset-classic": "npm:3.10.2"
     "@docusaurus/tsconfig": "npm:3.10.2"
     "@docusaurus/types": "npm:3.10.2"
-    "@mdx-js/react": "npm:^3.0.0"
+    "@mdx-js/react": "npm:^3.1.1"
     clsx: "npm:^2.0.0"
     prism-react-renderer: "npm:^2.3.0"
     react: "npm:^19.3.0"
