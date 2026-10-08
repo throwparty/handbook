@@ -3,7 +3,7 @@
   "description": "General documentation that we're comfortable publishing goes here",
   "version": "0.0.0",
   "private": true,
-  "packageManager": "yarn@4.12.0",
+  "packageManager": "yarn@4.18.1",
   "engines": {
     "node": ">=20.0"
   },
