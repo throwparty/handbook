@@ -3,6 +3,6 @@
   "position": 4,
   "link": {
     "type": "generated-index",
-    "description": "Stuff specific to your application's runtime, such as your package manager."
+    "description": "Stuff specific to your application's runtime, such as your package manager and build targets."
   }
 }

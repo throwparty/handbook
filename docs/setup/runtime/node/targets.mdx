@@ -1,0 +1,14 @@
+# Targets
+
+Common lifecycle targets ease transitions between projects. You're free to add application-specific targets, but aim to have the following `scripts` defined in `package.json`:
+
+## Build targets
+
+- `build` should compile/transpile the code (usually from `src` to `dist`). If the application requires generation of any files (e.g. route maps, schema) this target should depend on those tartgets too.
+- `clean` should remove any generated artifacts.
+- `typecheck` should typecheck the source, but not emit the resulting transpiled code.
+
+## Run targets
+
+- `start` should start the application in a configuration enabling hot-reload of changes.
+- `serve` should launch a server for the transpiled output.

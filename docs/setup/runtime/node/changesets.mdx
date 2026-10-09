@@ -1,0 +1,33 @@
+# Changesets
+
+We configure our repositories to release changes with [Changesets](https://github.com/changesets/changesets).
+
+1. Install the CLI (and the GitHub changelog generator, if you want changelog entries to link to PRs and authors):
+
+   ```shell
+   yarn add --dev @changesets/cli @changesets/changelog-github
+   ```
+
+2. Scaffold `.changeset/`:
+
+   ```shell
+   yarn changeset init
+   ```
+
+3. Edit `.changeset/config.json` — set `baseBranch` to your default branch, `access` to `restricted` (GitHub Packages) or `public`, and point `changelog` at `["@changesets/changelog-github", { "repo": "<owner>/<repo>" }]` if you installed the generator.
+
+4. Add the helper scripts to `package.json`:
+
+   ```json
+   {
+     "scripts": {
+       "changeset": "changeset",
+       "version": "changeset version",
+       "release": "changeset publish"
+     }
+   }
+   ```
+
+5. Add a release workflow that runs on pushes to the default branch and drives [changesets/action](https://github.com/changesets/action) with `version: yarn run changeset version` and `publish: yarn run changeset publish`. It needs `contents: write` (version commits, tags, GitHub releases), `pull-requests: write` (the "Version Packages" PR) and `packages: write` (publishing). Configure npm to use `https://npm.pkg.github.com` and pass `GITHUB_TOKEN` as both `GITHUB_TOKEN` and `NODE_AUTH_TOKEN` — no extra secrets are required.
+
+Once configured, see the [releasing with Changesets runbook](../../../runbooks/node/releasing-with-changesets) for the day-to-day process.
