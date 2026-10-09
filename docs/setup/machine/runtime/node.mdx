@@ -1,0 +1,38 @@
+# node
+
+## npm registry configuration
+
+We publish npm packages to [GitHub Packages](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry). Since by default all npm scopes (e.g. `@throwparty`) resolve against the package manager's default registry we have to configure each package manager to delegate each scope to the desired registry.
+
+:::note
+
+This configuration is *global* and **does not** belong in your repository.
+
+:::
+
+Mint a [new personal access token (classic)](https://github.com/settings/tokens/new) with the `read:packages` scope and a reasonable TTL (90 days maximum).
+
+### npm
+
+For npm, place the following in `~/.npmrc`, replacing `$token` with your token:
+
+```ini
+@throwparty:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=$token
+```
+
+### Yarn
+
+Recent Yarn versions read neither the registry mapping nor the token from `.npmrc` — with `.npmrc` alone, installing `@throwparty/*` resolves against `registry.yarnpkg.com` and fails. Put the scope in `~/.yarnrc.yml` instead, replacing `$token` with your token:
+
+```yaml
+npmScopes:
+  throwparty:
+    npmRegistryServer: https://npm.pkg.github.com
+    npmAuthToken: ${NODE_AUTH_TOKEN}
+    npmAlwaysAuth: true
+npmRegistries:
+  "https://npm.pkg.github.com":
+    npmAuthToken: ${NODE_AUTH_TOKEN}
+    npmAlwaysAuth: true
+```
