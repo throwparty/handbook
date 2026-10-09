@@ -3,7 +3,7 @@ import type { Config } from "@docusaurus/types";
 import type * as Preset from "@docusaurus/preset-classic";
 
 const config: Config = {
-  title: "throw.party handbook",
+  title: "Handbook",
   tagline: "How we construct exceptional software for software developers",
   favicon: "img/favicon.ico",
 
@@ -53,6 +53,8 @@ const config: Config = {
     ],
   ],
 
+  themes: ["@throwparty/docusaurus-theme"],
+
   themeConfig: {
     // XXX: replace with your project's social card
     image: "img/docusaurus-social-card.jpg",
@@ -64,6 +66,8 @@ const config: Config = {
       logo: {
         alt: "Logo; a yellow warning sign in the shape of a party hat with a fluffy pom pom",
         src: "img/logo.svg",
+        width: 200,
+        height: 200,
       },
       items: [
         {

@@ -1,21 +1,18 @@
 import type { ReactNode } from "react";
-import clsx from "clsx";
-import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
 import Heading from "@theme/Heading";
 
-import styles from "./index.module.css";
-
 function HomepageHeader() {
   const { siteConfig } = useDocusaurusContext();
   return (
-    <header className={clsx("hero hero--primary", styles.heroBanner)}>
+    <header className="tp-hero">
       <div className="container">
-        <Heading as="h1" className="hero__title">
+        <p className="tp-hero-eyebrow">throw.party</p>
+        <Heading as="h1" className="tp-hero-title">
           {siteConfig.title}
         </Heading>
-        <p className="hero__subtitle">{siteConfig.tagline}</p>
+        <p className="tp-hero-lede">{siteConfig.tagline}</p>
       </div>
     </header>
   );
