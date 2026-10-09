@@ -1,0 +1,31 @@
+# Releasing with Changesets
+
+How to cut a release from a repository [configured for Changesets](../../setup/runtime/node/changesets).
+
+## Cut a release
+
+Ship a changeset with every user-facing change:
+
+```shell
+yarn changeset
+```
+
+Pick the affected packages and the semver bump; it writes a markdown file under `.changeset/`. Commit it alongside the change.
+
+### Continuous delivery
+
+Pushes to the default branch should be handled by the release workflow:
+
+1. `changeset version` consumes the pending changesets — bumps `package.json`, rewrites each `CHANGELOG.md`, deletes the changeset files — and opens or updates a "Version Packages" pull request.
+2. Merging that pull request leaves nothing to version, so the workflow runs `changeset publish`, which builds each package (`prepublishOnly` → `yarn build`) and publishes it to GitHub Packages with the workflow's `GITHUB_TOKEN`. No extra secrets are needed.
+
+### Manual fallback
+
+To cut a release by hand, version and publish in two steps:
+
+```shell
+yarn version
+NODE_AUTH_TOKEN=<PAT with write:packages> yarn release
+```
+
+The token needs `write:packages` on the target repository.

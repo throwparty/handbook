@@ -88,6 +88,12 @@ const config: Config = {
           position: "left",
           label: "Setup",
         },
+        {
+          type: "docSidebar",
+          sidebarId: "runbooksSidebar",
+          position: "left",
+          label: "Runbooks",
+        },
         { to: "/blog", label: "Blog", position: "right" },
       ],
     },
