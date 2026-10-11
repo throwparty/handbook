@@ -1,0 +1,96 @@
+name: Pull request
+
+on:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow_ref }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: false
+  queue: max
+
+permissions: {}
+
+jobs:
+  changes:
+    name: Detect changes
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: read # paths-filter lists PR files via the API
+    outputs:
+      docs: ${{ steps.filter.outputs.docs }}
+      nix: ${{ steps.filter.outputs.nix }}
+      workflows: ${{ steps.filter.outputs.workflows }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # ratchet:actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - name: Detect changes
+        uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
+        id: filter
+        with:
+          filters: |
+            docs:
+              - 'blog/**'
+              - 'docs/**'
+              - 'src/**'
+              - 'static/**'
+              - 'docusaurus.config.ts'
+              - 'sidebars.ts'
+              - 'tsconfig.json'
+              - 'package.json'
+              - 'yarn.lock'
+              - '.yarnrc.yml'
+            nix:
+              - 'nix/**'
+            workflows:
+              - '.github/workflows/**'
+              - '.github/actions/**'
+              - '.github/dependabot.yaml'
+
+  build-docs:
+    name: Build docs
+    needs: changes
+    if: needs.changes.outputs.docs == 'true'
+    permissions:
+      contents: read
+      packages: read # Called workflow pulls @throwparty packages
+      pages: read # To configure Pages and upload build artifact
+      id-token: write # Required by actions/configure-pages
+    uses: $/.github/workflows/docs.build.yaml
+    secrets:
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      CACHIX_SIGNING_KEY: ${{ secrets.CACHIX_SIGNING_KEY }}
+
+  lint-workflows:
+    name: Lint workflows
+    needs: changes
+    if: needs.changes.outputs.workflows == 'true'
+    permissions:
+      contents: read
+    uses: $/.github/workflows/workflows.lint.yaml
+    secrets:
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      CACHIX_SIGNING_KEY: ${{ secrets.CACHIX_SIGNING_KEY }}
+
+  lint-nix:
+    name: Lint Nix
+    needs: changes
+    if: needs.changes.outputs.nix == 'true'
+    permissions:
+      contents: read
+    uses: $/.github/workflows/nix.lint.yaml
+    secrets:
+      CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      CACHIX_SIGNING_KEY: ${{ secrets.CACHIX_SIGNING_KEY }}
+
+  ready:
+    name: Ready
+    needs: [changes, build-docs, lint-workflows, lint-nix]
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check dependencies
+        if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
+        run: exit 1

@@ -1,0 +1,74 @@
+name: "Docs: build"
+
+on:
+  workflow_call:
+    secrets:
+      CACHIX_AUTH_TOKEN:
+        description: Cachix token used to push built store paths
+        required: false
+      CACHIX_SIGNING_KEY:
+        description: Cachix signing key used to push built store paths
+        required: false
+
+permissions: {}
+
+concurrency:
+  group: docs.build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        shell: nix develop ./nix --command bash -euo pipefail {0} # zizmor: ignore[misfeature]
+    permissions:
+      contents: read
+      packages: read # To pull @throwparty packages from the GitHub Package Registry
+      pages: read # To configure Pages and upload build artifact
+      id-token: write # Required by actions/configure-pages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # ratchet:actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - name: Setup Nix
+        uses: $/.github/actions/setup-nix
+        with:
+          push-name: ${{ vars.CACHIX_PUSH_CACHE }}
+          pull-names: ${{ vars.CACHIX_PULL_CACHES }}
+          cachix-auth-token: ${{ secrets.CACHIX_AUTH_TOKEN }} # zizmor: ignore[secrets-outside-env]
+          cachix-signing-key: ${{ secrets.CACHIX_SIGNING_KEY }} # zizmor: ignore[secrets-outside-env]
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup Pages
+        uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # ratchet:actions/configure-pages@v6.0.0
+      - name: Restore cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # ratchet:actions/cache@v6.1.0
+        with:
+          path: |
+            .docusaurus
+            build
+          key: "${{ runner.os }}-docs-build-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('**.css', '**.html', '**.json', '**.mdx', '**.svg', '**.tsx', '**.yml') }}"
+          restore-keys: "${{ runner.os }}-docs-build-${{ hashFiles('**/yarn.lock') }}-"
+      # Recent Yarn reads neither the registry mapping nor the token from
+      # .npmrc; put the scope in the home yarnrc instead.
+      - name: Configure Yarn
+        run: |
+          yarn config set --home "npmScopes.$SCOPE.npmRegistryServer" "$REGISTRY"
+          yarn config set --home "npmScopes.$SCOPE.npmAlwaysAuth" true
+          yarn config set --home "npmScopes.$SCOPE.npmAuthToken" "$TOKEN"
+          yarn config set --home "npmRegistries[\"$REGISTRY\"].npmAuthToken" "$TOKEN"
+          yarn config set --home "npmRegistries[\"$REGISTRY\"].npmAlwaysAuth" true
+        env:
+          REGISTRY: https://npm.pkg.github.com
+          SCOPE: throwparty
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install dependencies
+        run: yarn install --immutable
+      - name: Build
+        run: yarn build
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # ratchet:actions/upload-pages-artifact@v5.0.0
+        with:
+          path: ./build
