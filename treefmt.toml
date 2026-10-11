@@ -1,0 +1,46 @@
+# XXX: neither --fmt nor --dump format only named files
+
+[formatter.just]
+command = "hack/fmt/just-fmt.sh"
+includes = ["justfile", "mod.just"]
+
+[formatter.mdformat]
+command = "mdformat"
+includes = ["*.md"]
+
+[formatter.nixfmt]
+command = "nixfmt"
+includes = ["*.nix"]
+
+[formatter.prettier]
+command = "prettier"
+options = ["--write"]
+includes = [
+  "*.cjs",
+  "*.css",
+  "*.html",
+  "*.js",
+  "*.json",
+  "*.jsonc",
+  "*.jsx",
+  "*.md",
+  "*.mdx",
+  "*.mjs",
+  "*.ts",
+  "*.tsx",
+  "*.yaml",
+  "*.yml"
+]
+
+[formatter.shellcheck]
+command = "shellcheck"
+includes = [
+  "*.bash",
+  "*.bats",
+  "*.sh"
+]
+
+[formatter.shellcheck-envrc]
+command = "shellcheck"
+options = ["--exclude=SC2148"]
+includes = ["*.envrc"]
