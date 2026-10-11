@@ -1,0 +1,26 @@
+name: "Docs: deploy"
+
+on:
+  workflow_call: {}
+
+permissions: {}
+
+concurrency:
+  group: docs.deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      contents: read
+      pages: write # To deploy to GitHub Pages
+      id-token: write # Required by actions/deploy-pages
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # ratchet:actions/deploy-pages@v5.0.1
